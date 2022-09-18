@@ -1,25 +1,54 @@
 package ru.itis.lab01;
 
+import com.sun.source.tree.Scope;
+
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
     public static void main(String args[]){
+
         try{
-            Socket s = new Socket("localhost", 50001);
-            InputStream inputStream = s.getInputStream();
+            Socket clientSocket = new Socket("localhost", Server.SERVER_PORT);
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
+            Scanner scanner = new Scanner(System.in);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            Thread receiver = new Thread(new Runnable() {
+                String msg;
+                @Override
+                public void run() {
+                    try{
+                        msg = in.readLine();
+                        while(msg != null){
+                            System.out.println("Server:" + msg);
+                            msg= in.readLine();
+                        }
+                    }catch(IOException e){System.out.print(e);}
 
-            System.out.print(br.readLine());
+                }
+            });
+            receiver.start();
+            Thread sender = new Thread(new Runnable() {
+                String msg;
+                @Override
+                public void run() {
+                    while(true){
+                        msg = scanner.nextLine();
+                        out.println(msg);
+                        out.flush();
+                    }
+                }
+            });
+            sender.start();
 
+
+        }catch(IOException e){
+            System.out.println(e);
         }
-        catch(Exception e){
 
-        }
+
     }
 }

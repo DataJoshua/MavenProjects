@@ -29,7 +29,7 @@ public class WorkData {
         booking.setClient(client);
 
         Bed bed = new Bed();
-        bed.setPrice(500);
+       bed.setPrice(500);
         bed.setRoom(room);
         bed.setRoomNumber("10");
 

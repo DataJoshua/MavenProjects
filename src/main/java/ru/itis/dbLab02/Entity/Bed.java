@@ -3,7 +3,8 @@ package ru.itis.dbLab02.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter @Getter
+@Getter
+@Setter
 public class Bed {
     private Room room;
     private double price;

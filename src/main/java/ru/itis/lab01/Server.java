@@ -1,35 +1,59 @@
 package ru.itis.lab01;
 
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Server {
     public static int SERVER_PORT = 50001;
 
     public static void main(String args[]){
 
+        ServerSocket serverSocket;
+        BufferedReader in;
+        PrintWriter out;
+        Socket clientSocket;
+        Scanner scanner = new Scanner(System.in);
+
         try{
+            serverSocket = new ServerSocket(SERVER_PORT);
+            clientSocket = serverSocket.accept();
+            out = new PrintWriter(clientSocket.getOutputStream());
+            in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+            Thread sender = new Thread(new Runnable() {
+                String message;
+                @Override
+                public void run() {
+                      while(true){
+                          message = scanner.nextLine();
+                          out.println(message);
+                          out.flush();
+                      }
+                }
+            });
+            sender.start();
 
-            Socket clientSocket = serverSocket.accept();
+            Thread receiver = new Thread(new Runnable() {
+                String message;
+                @Override
+                public void run() {
+                    try{
+                        message = in.readLine();
+                        while(message != null){
+                            System.out.println("Client: " + message);
+                            message = in.readLine();
+                        }
 
-            OutputStream os = clientSocket.getOutputStream();
-
-            DataOutputStream dos =  new DataOutputStream(os);
-
-            dos.writeBytes("hola putito\n");
-
-
+                    }catch(IOException e){System.out.print(e);}
+                }
+            });
+            receiver.start();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        catch(IOException e){System.out.print(e);}
     }
 
 
