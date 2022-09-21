@@ -54,32 +54,36 @@ public class Servidor {
                     message = in.readLine();
                     while(message != null){
 
+                        String sendMessage = "no entiendo nada";
 
                         if(message.equalsIgnoreCase("как дела?")) {
 
                             String [] options = {"хорошо", "плохо", "отлично" };
                             String option = options[(int) Math.random() * options.length];
-                            out.write((option + "\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = option;
 
                         } else if(message.equalsIgnoreCase("как сегодня погода?")){
                             String [] options = {"снег", "Дождь", "Ветер", "тепло"};
                             String option = options[(int)Math.random() * options.length];
-                            out.write(( option + "\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = option;
                         } else if(message.contains("меня зовут")) {
                             String name = message.substring(10, message.length());
-                            out.write(("Привет" + name + "\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = "Привет" + name;
                         } else if(message.equalsIgnoreCase("exit")) {
-                            out.write(("До свидания" +"\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = "До свидания";
                         } else if(message.equalsIgnoreCase("какое сегодня число?")){
                             Date date =  new Date();
-                            out.write((date.toString() + "\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = date.toString();
                         } else if(message.equalsIgnoreCase("который час?")){
                             DateTimeFormatter f = DateTimeFormatter.ofPattern("HH:mm:ss");
                             LocalDateTime time = LocalDateTime.now();
-                            out.write((f.format(time) + "\n").getBytes(StandardCharsets.UTF_8));
+                            sendMessage = time.format(f);
+                        }else if(message.equalsIgnoreCase("как тебя зовут?")){
+
+                            sendMessage = "Меня зовут server )";
                         }
 
-
+                        out.write((sendMessage+ "\n").getBytes(StandardCharsets.UTF_8));
 
                         message = in.readLine();
                     }
